@@ -3,6 +3,7 @@ require("dotenv").config();
 // IMport required packages
 const express = require("express");
 const cors = require("cors");
+const bcrypt = require("bcrypt");
 const helmet = require("helmet");
 const rateLimit = require("express-rate-limit");
 
@@ -22,7 +23,20 @@ const authLimiter = rateLimit({
 });
 app.use("/api/auth", authLimiter);
 
+// In-memory data storage
+let users = [];
+let tasks = [];
+let nextUserId = 1;
+let nextTaskId = 1;
+const adminPassword = bcrypt.hashSync(process.env.ADMIN_PASSWORD, 10);
 
+users.push({
+    id: nextUserId ++,
+    username: "admin",
+    password: adminPassword,
+    role: "admin",
+    createdAt: new Date(),
+})
 
 // Get root route
 app.get("/", (req, res) => {
