@@ -6,6 +6,7 @@ const cors = require("cors");
 const bcrypt = require("bcryptjs");
 const helmet = require("helmet");
 const rateLimit = require("express-rate-limit");
+const { router: authRoutes, setUsers } = require("./routes/authRoutes");
 
 // Create express app
 const app = express();
@@ -28,6 +29,7 @@ let users = [];
 let tasks = [];
 let nextUserId = 1;
 let nextTaskId = 1;
+
 const adminPassword = bcrypt.hashSync(process.env.ADMIN_PASSWORD, 10);
 const email = process.env.EMAIL;
 
@@ -40,6 +42,8 @@ users.push({
     createdAt: new Date(),
 })
 
+setUsers(users, nextUserId);
+
 // Get root route
 app.get("/", (req, res) => {
     res.json({ message: "Task Management API",});
@@ -47,6 +51,9 @@ app.get("/", (req, res) => {
 
 // Server listening port
 const PORT = process.env.PORT || 3001;
+
+// authRoutes mounted
+app.use("/api/auth", authRoutes);
 
 // Basic error handling
 app.use((req, res) => {

@@ -1,7 +1,7 @@
-const require("jsonwebtoken");
+const jwt = require("jsonwebtoken");
 
 const authenticateToken = (req, res, next) => {
-    const authHeader = req.headers.authoratization;
+    const authHeader = req.headers.authorization;
     // Extract from bear token
     const token = authHeader && authHeader.split(" ")[1];
 
@@ -13,7 +13,7 @@ const authenticateToken = (req, res, next) => {
 
     try {
         // Verify token with jwt.verify();
-        const decoded = jwt.verify(token, process.env.JWT_secret);
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
         req.user = decoded;
         next();
 
@@ -23,7 +23,7 @@ const authenticateToken = (req, res, next) => {
 };
 
 const requireAdmin = (req, res, next) => {
-    if (req.user.role === "admin") {
+    if (req.user.role !== "admin") {
         return res.status(403).json({ error: "Accessed denied. Admins access only!"});
     }
     next();
