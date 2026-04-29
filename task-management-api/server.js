@@ -3,7 +3,7 @@ require("dotenv").config();
 // IMport required packages
 const express = require("express");
 const cors = require("cors");
-const bcrypt = require("bcrypt");
+const bcrypt = require("bcryptjs");
 const helmet = require("helmet");
 const rateLimit = require("express-rate-limit");
 
@@ -17,7 +17,7 @@ app.use(express.json());
 
 // Set up rate limiting for auth routes
 const authLimiter = rateLimit({
-    windowMS: 15 * 60 * 1000,
+    windowMs: 15 * 60 * 1000,
     max: 25,
     message: { error: "Too many request, please try again in 15 minutes"},
 });
@@ -29,10 +29,12 @@ let tasks = [];
 let nextUserId = 1;
 let nextTaskId = 1;
 const adminPassword = bcrypt.hashSync(process.env.ADMIN_PASSWORD, 10);
+const email = process.env.EMAIL;
 
 users.push({
     id: nextUserId ++,
     username: "admin",
+    email: email,
     password: adminPassword,
     role: "admin",
     createdAt: new Date(),
