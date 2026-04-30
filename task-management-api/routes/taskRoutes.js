@@ -36,7 +36,19 @@ router.post("/", authenticateToken, (req, res, next) => {
         const validStatus = ["todo", "in-progress", "completed"];
         if (!validStatus.includes(status)) {
             return res.status(400).json({ error: "Status must be todo, completed, or in-progress."});
-        } 
+        }
+
+        if (title && (title.length < 3 || title.length > 100)) {
+            return res.status(400).json({ error: "Title must be 3-100 characters long."});
+        }
+
+        if (description && description.length < 10) {
+          return res
+            .status(400)
+            .json({
+              error: "Descriptions must be at least 10 characters long.",
+            });
+        }
 
         // Create new task
         const newTask = {
@@ -74,19 +86,22 @@ router.put("/:id", authenticateToken, (req, res, next) => {
 
         const { title, description, status } = req.body;
 
-
         if (title && (title.length < 3 || title.length > 100)) {
             return res.status(400).json({ error: "Title must be 3-100 characters long."});
         }
 
-        if (description.length < 10 && description) {
-            return res.status(400).json({ error: "Descriptions must be at least 10 characters long."})
+        if (description && description.length < 10) {
+          return res
+            .status(400)
+            .json({
+              error: "Descriptions must be at least 10 characters long.",
+            });
         }
         
         // validate status
         const validStatus = ["todo", "in-progress", "completed"];
         if (status && !validStatus.includes(status)) {
-            return res.status(400).json({ error: "Statust must be todo, complete, or in-progress"})
+            return res.status(400).json({ error: "Status must be todo, completed, or in-progress"})
         }
 
         // Update fields

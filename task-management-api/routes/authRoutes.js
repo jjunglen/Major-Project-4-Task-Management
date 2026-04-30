@@ -22,6 +22,14 @@ router.post("/register", async (req, res, next) => {
             return res.status(400).json({ error: "Email, password, and username are required"})
         }
 
+        if (username.length < 3 || username.length > 20) {
+            return res.status(400).json({ error: "Username must be 3-20 characters long."});
+        }
+
+        if (password.length < 6) {
+            return res.status(400).json({ error: "Password must be at least 6 characters long"});
+        }
+
         // check if email exists
         const existingEmail = users.find(user => user.email === email);
         if (existingEmail) {
@@ -76,14 +84,6 @@ router.post("/login", async (req, res, next) => {
 
         if (!email || !password) {
             return res.status(400).json({ error: "Email and password required." });
-        }
-
-        if (username.length < 3 || username.length > 20) {
-            return res.status(400).json({ error: "Username must be 3-20 characters long."});
-        }
-
-        if (password.length < 6) {
-            return res.status(400).json({ error: "Password must be at least 6 characters long"});
         }
 
         // Find user by email
