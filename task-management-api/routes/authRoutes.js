@@ -38,7 +38,7 @@ router.post("/register", async (req, res, next) => {
             email,
             password: hashPassword,
             role: "user",
-            createAt: new Date()
+            createdAt: new Date()
         };
         users.push(newUser);
         
@@ -54,7 +54,7 @@ router.post("/register", async (req, res, next) => {
             }
         );
 
-        res.status(200).json({
+        res.status(201).json({
             token,
             user: {
                 id: newUser.id,
@@ -75,7 +75,15 @@ router.post("/login", async (req, res, next) => {
         const { email, password } = req.body;
 
         if (!email || !password) {
-            res.status(400).json({ error: "Email and password required." });
+            return res.status(400).json({ error: "Email and password required." });
+        }
+
+        if (username.length < 3 || username.length > 20) {
+            return res.status(400).json({ error: "Username must be 3-20 characters long."});
+        }
+
+        if (password.length < 6) {
+            return res.status(400).json({ error: "Password must be at least 6 characters long"});
         }
 
         // Find user by email
@@ -103,7 +111,7 @@ router.post("/login", async (req, res, next) => {
         );
 
         // return token, user
-        res.status(200).json({
+        res.status(201).json({
             token,
             user: {
                 id: userEmail.id,

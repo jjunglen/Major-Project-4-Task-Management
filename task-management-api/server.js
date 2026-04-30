@@ -6,7 +6,12 @@ const cors = require("cors");
 const bcrypt = require("bcryptjs");
 const helmet = require("helmet");
 const rateLimit = require("express-rate-limit");
+
 const { router: authRoutes, setUsers } = require("./routes/authRoutes");
+
+const { router: taskRoutes, setTasks, setUsers: setTaskUsers } = require("./routes/taskRoutes");
+
+const { router: adminRoutes, setTasks: setAdminTasks, setUsers: setAdminUsers } = require("./routes/adminRoutes");
 
 // Create express app
 const app = express();
@@ -43,6 +48,10 @@ users.push({
 })
 
 setUsers(users, nextUserId);
+setTasks(tasks, nextTaskId);
+setTaskUsers(users);
+setAdminTasks(tasks);
+setAdminUsers(users);
 
 // Get root route
 app.get("/", (req, res) => {
@@ -54,6 +63,8 @@ const PORT = process.env.PORT || 3001;
 
 // authRoutes mounted
 app.use("/api/auth", authRoutes);
+app.use("/api/tasks", taskRoutes);
+app.use("/api/admin", adminRoutes);
 
 // Basic error handling
 app.use((req, res) => {
